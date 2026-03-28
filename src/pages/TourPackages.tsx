@@ -1147,7 +1147,7 @@ const TourPackages = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#2185FF' }}>
         <div className="max-w-7xl mx-auto">
           
           {/* Packages List */}

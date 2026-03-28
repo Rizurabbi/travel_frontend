@@ -28,13 +28,12 @@ const API_BASE_URL =
   process.env.REACT_APP_API_URL ||
   "https://openskai.onrender.com";
 
-const Index = () => {
+const IndexDe = () => {
   const { messages, isLoading, sendMessage } = useChat();
   const { user, token, login } = useAuth();
   const { toast } = useToast();
   const [homeMessage, setHomeMessage] = useState("");
-  
-  // Customer Support Modal State
+
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [supportAccessInfo, setSupportAccessInfo] = useState<any>(null);
@@ -42,28 +41,22 @@ const Index = () => {
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [showSupportChat, setShowSupportChat] = useState(false);
-  
+
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Check user's support access status
   const checkSupportAccess = async () => {
     if (!user || !token) {
       setLoginModalOpen(true);
       return;
     }
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/support/access`, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await response.json();
-      
       if (response.ok) {
         setSupportAccessInfo(data);
         if (data.has_access) {
@@ -72,18 +65,10 @@ const Index = () => {
           setSupportModalOpen(true);
         }
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to check support access",
-          variant: "destructive",
-        });
+        toast({ title: "Fehler", description: data.error || "Support-Zugang konnte nicht geprüft werden", variant: "destructive" });
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to check support access",
-        variant: "destructive",
-      });
+      toast({ title: "Fehler", description: error.message || "Support-Zugang konnte nicht geprüft werden", variant: "destructive" });
     }
   };
 
@@ -92,71 +77,37 @@ const Index = () => {
       const start = new Date(travelDates.startDate);
       const end = new Date(travelDates.endDate);
       const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      if (days > 0) {
-        setEstimatedCost(days);
-      }
+      if (days > 0) setEstimatedCost(days);
     }
   };
 
-  useEffect(() => {
-    calculateDays();
-  }, [travelDates]);
+  useEffect(() => { calculateDays(); }, [travelDates]);
 
   const handleSupportPayment = async () => {
-    if (!user || !token) {
-      setLoginModalOpen(true);
-      return;
-    }
-
+    if (!user || !token) { setLoginModalOpen(true); return; }
     if (!travelDates.startDate || !travelDates.endDate) {
-      toast({
-        title: "Error",
-        description: "Please select travel dates",
-        variant: "destructive",
-      });
+      toast({ title: "Fehler", description: "Bitte wählen Sie Ihre Reisedaten aus", variant: "destructive" });
       return;
     }
-
     setIsProcessingPayment(true);
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/support/purchase-access`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          start_date: travelDates.startDate,
-          end_date: travelDates.endDate,
-          days: estimatedCost,
-          amount: estimatedCost,
-        }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ start_date: travelDates.startDate, end_date: travelDates.endDate, days: estimatedCost, amount: estimatedCost }),
       });
-
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to initiate payment");
-      }
-
+      if (!response.ok) throw new Error(data.error || "Failed to initiate payment");
       if (data.payment_url) {
         window.location.href = data.payment_url;
       } else {
         setSupportAccessInfo(data);
         setShowSupportChat(true);
         setSupportModalOpen(false);
-        toast({
-          title: "Success",
-          description: "Support access granted!",
-        });
+        toast({ title: "Erfolg", description: "Support-Zugang gewährt!" });
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to process payment",
-        variant: "destructive",
-      });
+      toast({ title: "Fehler", description: error.message || "Failed to process payment", variant: "destructive" });
     } finally {
       setIsProcessingPayment(false);
     }
@@ -164,16 +115,10 @@ const Index = () => {
 
   const handleLogin = async () => {
     if (!loginEmail || !loginPassword) {
-      toast({
-        title: "Error",
-        description: "Please enter email and password",
-        variant: "destructive",
-      });
+      toast({ title: "Fehler", description: "Bitte geben Sie Ihre E-Mail und Ihr Passwort ein", variant: "destructive" });
       return;
     }
-
     setIsLoggingIn(true);
-
     try {
       await login(loginEmail, loginPassword);
       setLoginModalOpen(false);
@@ -181,11 +126,7 @@ const Index = () => {
       setLoginEmail("");
       setLoginPassword("");
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Login failed",
-        variant: "destructive",
-      });
+      toast({ title: "Fehler", description: error.message || "Anmeldung fehlgeschlagen", variant: "destructive" });
     } finally {
       setIsLoggingIn(false);
     }
@@ -195,71 +136,66 @@ const Index = () => {
     e?.preventDefault();
     const trimmed = homeMessage.trim();
     if (!trimmed || isLoading) return;
-
     await sendMessage(trimmed);
     setHomeMessage("");
   };
 
   const handleHomeChatKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      await handleHomeChatSubmit();
-    }
+    if (e.key === "Enter") { e.preventDefault(); await handleHomeChatSubmit(); }
   };
 
   return (
     <Layout>
       <div className="openskai-container">
-        {/* no header buttons on index, Navbar handles login/language */}
-
-        {/* Logo Section */}
+        {/* Logo-Bereich */}
         <div className="logo-section">
           <img src="/logoname.png" alt="OPENSKAI" className="openskai-name-image" />
         </div>
 
-        {/* Service Cards Section */}
+        {/* Service-Karten-Bereich */}
         <div className="services-section">
-          {/* Travel Booking Card */}
+          {/* Reisebuchung */}
           <Dialog>
             <DialogTrigger asChild>
               <div className="service-card">
-                <img src="/Airplane_Icon.png" alt="Travel booking" className="service-icon" />
-                <h3 className="service-title">TRAVEL<br />BOOKING</h3>
-                <p className="service-description">Book Air ticket, Hotel, Tour packages and more.</p>
-                <button className="learn-more-btn">LEARN MORE...</button>
+                <img src="/Airplane_Icon.png" alt="Reisebuchung" className="service-icon" />
+                <h3 className="service-title">REISE-<br />BUCHUNG</h3>
+                <p className="service-description">Buchen Sie Flugtickets, Hotels, Reisepakete und mehr.</p>
+                <button className="learn-more-btn">MEHR ERFAHREN...</button>
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-3xl font-bold mb-4" style={{ color: "#2185FF" }}>
-                  Travel Booking
+                  Reisebuchung
                 </DialogTitle>
                 <p className="text-lg text-gray-700">
-                  Book Air tickets, Hotels, Tour packages and more.
+                  Buchen Sie Flugtickets, Hotels, Reisepakete und mehr.
                 </p>
               </DialogHeader>
               <div className="mt-6">
                 <Accordion type="single" collapsible className="space-y-3">
                   <AccordionItem value="why" className="rounded-lg border">
                     <AccordionTrigger className="text-lg font-semibold px-6 py-3" style={{ color: "#2185FF" }}>
-                      Why Travel Booking?
+                      Warum Reisebuchung?
                     </AccordionTrigger>
                     <AccordionContent className="text-base px-6 py-4 text-gray-700">
-                      We believe travel is more than just visiting new places—it's about creating meaningful experiences. 
-                      Our carefully designed packages combine adventure, comfort, and cultural immersion to give you 
-                      the journey of a lifetime. From exotic beaches to mountain retreats, we handle every detail so you 
-                      can focus on making memories.
+                      Wir glauben, dass Reisen mehr ist als das Besuchen neuer Orte – es geht darum, bedeutungsvolle
+                      Erlebnisse zu schaffen. Unsere sorgfältig gestalteten Pakete verbinden Abenteuer, Komfort und
+                      kulturelles Eintauchen, um Ihnen die Reise Ihres Lebens zu bieten. Von exotischen Stränden bis
+                      hin zu Bergrefugien kümmern wir uns um jedes Detail, damit Sie sich auf das Schaffen von
+                      Erinnerungen konzentrieren können.
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="why-us" className="rounded-lg border">
                     <AccordionTrigger className="text-lg font-semibold px-6 py-3" style={{ color: "#2185FF" }}>
-                      Why Us?
+                      Warum Wir?
                     </AccordionTrigger>
                     <AccordionContent className="text-base px-6 py-4 text-gray-700">
-                      With over a decade of experience, we've perfected the art of crafting unforgettable journeys. 
-                      Our team handpicks every destination and activity to ensure quality and authenticity. 
-                      We offer 24/7 support, flexible booking options, and the best value for your money.
+                      Mit über einem Jahrzehnt Erfahrung haben wir die Kunst perfektioniert, unvergessliche Reisen zu
+                      gestalten. Unser Team wählt sorgfältig jeden Reiseziel und jede Aktivität aus, um Qualität und
+                      Authentizität zu gewährleisten. Wir bieten 24/7-Support, flexible Buchungsoptionen und den besten
+                      Wert für Ihr Geld.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -267,34 +203,35 @@ const Index = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Travel Insurance Card */}
+          {/* Reiseversicherung */}
           <Dialog>
             <DialogTrigger asChild>
               <div className="service-card">
-                <img src="/Shield_Icon.png" alt="Travel insurance" className="service-icon" />
-                <h3 className="service-title">TRAVEL<br />INSURANCE</h3>
-                <p className="service-description">Stay protected on your journey</p>
-                <button className="learn-more-btn">LEARN MORE...</button>
+                <img src="/Shield_Icon.png" alt="Reiseversicherung" className="service-icon" />
+                <h3 className="service-title">REISE-<br />VERSICHERUNG</h3>
+                <p className="service-description">Bleiben Sie auf Ihrer Reise geschützt</p>
+                <button className="learn-more-btn">MEHR ERFAHREN...</button>
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-3xl font-bold mb-4" style={{ color: "#2185FF" }}>
-                  Travel Insurance
+                  Reiseversicherung
                 </DialogTitle>
                 <p className="text-lg text-gray-700">
-                  Travel with confidence knowing you're protected against the unexpected
+                  Reisen Sie mit Vertrauen und wissen Sie, dass Sie gegen das Unerwartete geschützt sind
                 </p>
               </DialogHeader>
               <div className="mt-6">
                 <Accordion type="single" collapsible className="space-y-3">
                   <AccordionItem value="why" className="rounded-lg border">
                     <AccordionTrigger className="text-lg font-semibold px-6 py-3" style={{ color: "#2185FF" }}>
-                      Why Insurance?
+                      Warum eine Versicherung?
                     </AccordionTrigger>
                     <AccordionContent className="text-base px-6 py-4 text-gray-700">
-                      Our comprehensive travel insurance protects you from medical emergencies, trip cancellations, 
-                      lost luggage, and more. Travel with peace of mind knowing you're covered wherever you go.
+                      Unsere umfassende Reiseversicherung schützt Sie vor medizinischen Notfällen, Reisestornierungen,
+                      verlorenem Gepäck und mehr. Reisen Sie mit einem ruhigen Gewissen und wissen Sie, dass Sie
+                      überall geschützt sind.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -302,33 +239,33 @@ const Index = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Travel Banking Card */}
+          {/* Reise-Banking */}
           <Dialog>
             <DialogTrigger asChild>
               <div className="service-card">
-                <img src="/Wallet_icon.png" alt="Travel banking" className="service-icon" />
-                <h3 className="service-title">TRAVEL<br />BANKING</h3>
-                <p className="service-description">Secure payment solutions across borders</p>
-                <button className="learn-more-btn">LEARN MORE...</button>
+                <img src="/Wallet_icon.png" alt="Reise-Banking" className="service-icon" />
+                <h3 className="service-title">REISE-<br />BANKING</h3>
+                <p className="service-description">Sichere Zahlungslösungen über Grenzen hinweg</p>
+                <button className="learn-more-btn">MEHR ERFAHREN...</button>
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-3xl font-bold mb-4" style={{ color: "#2185FF" }}>
-                  Travel Banking
+                  Reise-Banking
                 </DialogTitle>
                 <p className="text-lg text-gray-700">
-                  Secure, convenient, and flexible payment solutions for all your travel needs
+                  Sichere, bequeme und flexible Zahlungslösungen für alle Ihre Reisebedürfnisse
                 </p>
               </DialogHeader>
               <div className="mt-6">
                 <Accordion type="single" collapsible className="space-y-3">
                   <AccordionItem value="features" className="rounded-lg border">
                     <AccordionTrigger className="text-lg font-semibold px-6 py-3" style={{ color: "#2185FF" }}>
-                      Key Features
+                      Hauptmerkmale
                     </AccordionTrigger>
                     <AccordionContent className="text-base px-6 py-4 text-gray-700">
-                      Multi-currency support, Competitive exchange rates, Secure transactions, 24/7 customer support
+                      Mehrwährungsunterstützung, Wettbewerbsfähige Wechselkurse, Sichere Transaktionen, 24/7-Kundendienst
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -336,14 +273,14 @@ const Index = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Customer Support Card */}
+          {/* Kundendienst */}
           <Dialog open={supportModalOpen} onOpenChange={setSupportModalOpen}>
             <DialogTrigger asChild>
               <div className="service-card" onClick={checkSupportAccess}>
-                <img src="/Support_Icon.png" alt="Customer support" className="service-icon" />
-                <h3 className="service-title">CUSTOMER<br />SUPPORT</h3>
-                <p className="service-description">24/7 assistance</p>
-                <button className="learn-more-btn">LEARN MORE...</button>
+                <img src="/Support_Icon.png" alt="Kundendienst" className="service-icon" />
+                <h3 className="service-title">KUNDEN-<br />DIENST</h3>
+                <p className="service-description">24/7 Unterstützung</p>
+                <button className="learn-more-btn">MEHR ERFAHREN...</button>
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
@@ -351,110 +288,89 @@ const Index = () => {
                 <>
                   <DialogHeader>
                     <DialogTitle className="text-3xl font-bold mb-4" style={{ color: "#2185FF" }}>
-                      24/7 Customer Support
+                      24/7 Kundendienst
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     <div className="p-4 rounded-lg" style={{ backgroundColor: "#f0f4ff", borderLeft: "4px solid #2185FF" }}>
                       <h3 className="font-bold text-lg mb-3" style={{ color: "#001540" }}>
-                        About Our Support Service
+                        Über Unseren Support-Service
                       </h3>
                       <p className="text-gray-700 mb-3">
-                        This service is available to all customers who have purchased from our site. 
-                        If you haven't purchased from us yet, there is a <strong>$1 per day</strong> charge to use our support line.
+                        Dieser Service steht allen Kunden zur Verfügung, die auf unserer Website eingekauft haben.
+                        Wenn Sie noch nichts bei uns gekauft haben, wird eine Gebühr von <strong>1 $ pro Tag</strong> für die Nutzung unserer Support-Linie erhoben.
                       </p>
                       <p className="text-gray-700">
-                        We'll need to know your exact travel dates to calculate the total charge. 
-                        Once you provide your dates, we'll show you the cost and process your payment.
+                        Wir benötigen Ihre genauen Reisedaten, um die Gesamtgebühr zu berechnen.
+                        Sobald Sie Ihre Daten angegeben haben, zeigen wir Ihnen die Kosten an und verarbeiten Ihre Zahlung.
                       </p>
                     </div>
 
                     {!user ? (
                       <div className="text-center py-4">
-                        <p className="mb-4 text-gray-700">Please log in to proceed with support access</p>
+                        <p className="mb-4 text-gray-700">Bitte melden Sie sich an, um auf den Support zuzugreifen</p>
                         <Button
-                          onClick={() => {
-                            setSupportModalOpen(false);
-                            setLoginModalOpen(true);
-                          }}
-                          style={{
-                            backgroundColor: "#2185FF",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
+                          onClick={() => { setSupportModalOpen(false); setLoginModalOpen(true); }}
+                          style={{ backgroundColor: "#2185FF", color: "white", fontWeight: "600" }}
                         >
-                          Log In or Sign Up
+                          Anmelden oder Registrieren
                         </Button>
                       </div>
                     ) : supportAccessInfo?.has_access ? (
                       <div className="p-4 rounded-lg text-center" style={{ backgroundColor: "#e8f5e9" }}>
                         <p className="text-green-700 font-bold text-lg">
-                          ✓ You have support access until {new Date(supportAccessInfo.expires_at).toLocaleDateString()}
+                          ✓ Sie haben Support-Zugang bis zum {new Date(supportAccessInfo.expires_at).toLocaleDateString()}
                         </p>
                         <Button
                           onClick={() => setShowSupportChat(true)}
                           className="mt-4"
-                          style={{
-                            backgroundColor: "#2185FF",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
+                          style={{ backgroundColor: "#2185FF", color: "white", fontWeight: "600" }}
                         >
-                          Start Chat
+                          Chat Starten
                         </Button>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-semibold mb-2" style={{ color: "#001540" }}>
-                            Travel Start Date *
+                            Reisebeginn *
                           </label>
                           <Input
                             type="date"
                             value={travelDates.startDate}
-                            onChange={(e) =>
-                              setTravelDates({ ...travelDates, startDate: e.target.value })
-                            }
+                            onChange={(e) => setTravelDates({ ...travelDates, startDate: e.target.value })}
                             style={{ borderColor: "#2185FF" }}
                           />
                         </div>
                         <div>
                           <label className="block text-sm font-semibold mb-2" style={{ color: "#001540" }}>
-                            Travel End Date *
+                            Reiseende *
                           </label>
                           <Input
                             type="date"
                             value={travelDates.endDate}
-                            onChange={(e) =>
-                              setTravelDates({ ...travelDates, endDate: e.target.value })
-                            }
+                            onChange={(e) => setTravelDates({ ...travelDates, endDate: e.target.value })}
                             style={{ borderColor: "#2185FF" }}
                           />
                         </div>
-
                         {estimatedCost > 0 && (
                           <div className="p-4 rounded-lg text-center" style={{ backgroundColor: "#fff3cd", borderLeft: "4px solid #FFF200" }}>
-                            <p className="text-sm text-gray-700">Estimated Cost</p>
+                            <p className="text-sm text-gray-700">Geschätzte Kosten</p>
                             <p className="text-3xl font-bold" style={{ color: "#2185FF" }}>
                               ${estimatedCost}.00
                             </p>
                             <p className="text-xs text-gray-600 mt-1">
-                              {estimatedCost} day{estimatedCost !== 1 ? "s" : ""} × $1/day
+                              {estimatedCost} Tag{estimatedCost !== 1 ? "e" : ""} × 1 $/Tag
                             </p>
                           </div>
                         )}
-
                         <Button
                           onClick={handleSupportPayment}
                           disabled={isProcessingPayment || estimatedCost === 0}
                           className="w-full"
-                          style={{
-                            backgroundColor: "#2185FF",
-                            color: "white",
-                            fontWeight: "600",
-                          }}
+                          style={{ backgroundColor: "#2185FF", color: "white", fontWeight: "600" }}
                         >
-                          {isProcessingPayment ? "Processing..." : `Pay $${estimatedCost}.00`}
+                          {isProcessingPayment ? "Wird verarbeitet..." : `$${estimatedCost}.00 bezahlen`}
                         </Button>
                       </div>
                     )}
@@ -464,13 +380,13 @@ const Index = () => {
                 <>
                   <DialogHeader>
                     <DialogTitle className="text-3xl font-bold" style={{ color: "#2185FF" }}>
-                      Live Support Chat
+                      Live-Support-Chat
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 max-h-[60vh] overflow-y-auto">
                     <div className="p-4 rounded-lg text-center mb-4" style={{ backgroundColor: "#e3f2fd" }}>
                       <p style={{ color: "#2185FF", fontWeight: "600" }}>
-                        Great to have you logged in. How may I help you?
+                        Schön, dass Sie angemeldet sind. Wie kann ich Ihnen helfen?
                       </p>
                     </div>
                     <ChatContainer messages={messages} isLoading={isLoading} />
@@ -482,12 +398,12 @@ const Index = () => {
           </Dialog>
         </div>
 
-        {/* Chat Input Section */}
+        {/* Chat-Bereich */}
         <div className="chat-section">
           <form className="chat-input-wrapper" onSubmit={handleHomeChatSubmit}>
             <input
               type="text"
-              placeholder="Ask me anything about your travel plans..."
+              placeholder="Fragen Sie mich alles über Ihre Reisepläne..."
               className="chat-input"
               value={homeMessage}
               onChange={(e) => setHomeMessage(e.target.value)}
@@ -498,7 +414,7 @@ const Index = () => {
               type="submit"
               className="send-btn"
               disabled={isLoading || !homeMessage.trim()}
-              aria-label="Send message"
+              aria-label="Nachricht senden"
             >
               <Send size={24} />
             </button>
@@ -506,7 +422,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Login Modal */}
+      {/* Anmelde-Modal */}
       <Dialog open={loginModalOpen} onOpenChange={setLoginModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -514,17 +430,17 @@ const Index = () => {
               <img src="/WinLogoGlow.png" alt="Logo" style={{ height: 64, objectFit: "contain" }} />
             </div>
             <DialogTitle className="text-2xl font-bold text-center" style={{ color: "#2185FF" }}>
-              Log In
+              Anmelden
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: "#001540" }}>
-                Email
+                E-Mail
               </label>
               <Input
                 type="email"
-                placeholder="your@email.com"
+                placeholder="ihre@email.de"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
                 style={{ borderColor: "#2185FF" }}
@@ -532,11 +448,10 @@ const Index = () => {
             </div>
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: "#001540" }}>
-                Password
+                Passwort
               </label>
               <Input
                 type="password"
-                placeholder="••••••••"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 style={{ borderColor: "#2185FF" }}
@@ -546,25 +461,14 @@ const Index = () => {
               onClick={handleLogin}
               disabled={isLoggingIn}
               className="w-full"
-              style={{
-                backgroundColor: "#2185FF",
-                color: "white",
-                fontWeight: "600",
-              }}
+              style={{ backgroundColor: "#2185FF", color: "white", fontWeight: "600" }}
             >
-              {isLoggingIn ? "Logging in..." : "Log In"}
+              {isLoggingIn ? "Anmeldung läuft..." : "Anmelden"}
             </Button>
             <p className="text-center text-sm" style={{ color: "#001540" }}>
-              Don't have an account?{" "}
-              <a
-                href="/auth"
-                style={{
-                  color: "#2185FF",
-                  fontWeight: "600",
-                  textDecoration: "none",
-                }}
-              >
-                Sign up here
+              Noch kein Konto?{" "}
+              <a href="/auth" style={{ color: "#2185FF", fontWeight: "600", textDecoration: "none" }}>
+                Hier registrieren
               </a>
             </p>
           </div>
@@ -574,4 +478,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default IndexDe;

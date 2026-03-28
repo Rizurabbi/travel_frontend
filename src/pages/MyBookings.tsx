@@ -86,7 +86,7 @@ const MyBookings = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#2185FF' }}>
           <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#001540' }} />
         </div>
       </Layout>
@@ -95,7 +95,7 @@ const MyBookings = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#2185FF' }}>
         <div className="max-w-6xl mx-auto">
           
           {/* Header */}

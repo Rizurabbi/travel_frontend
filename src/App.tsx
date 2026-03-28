@@ -24,6 +24,9 @@ import CustomerSupport from "./pages/CustomerSupport";  // NEW
 import MyBookings from "./pages/MyBookings";  // NEW (optional, you can create this)
 
 import TourPackageDetails from '@/pages/TourPackageDetails';
+import IndexEs from './pages/IndexEs';
+import IndexFr from './pages/IndexFr';
+import IndexDe from './pages/IndexDe';
 
 // In your routes:
 
@@ -41,6 +44,9 @@ const App = () => (
             <Routes>
               {/* PUBLIC ROUTES - No login required */}
               <Route path="/" element={<Index />} />
+              <Route path="/es" element={<IndexEs />} />
+              <Route path="/fr" element={<IndexFr />} />
+              <Route path="/de" element={<IndexDe />} />
               <Route path="/service" element={<Service />} />
               <Route path="/travel" element={<Travel />} />
               <Route path="/insurance" element={<Insurance />} />

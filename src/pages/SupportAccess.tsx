@@ -903,7 +903,7 @@ const SupportAccess = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#2185FF' }}>
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: '#001540' }} />
             <p style={{ color: '#001540' }}>Loading support access...</p>
@@ -915,7 +915,7 @@ const SupportAccess = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#2185FF' }}>
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">

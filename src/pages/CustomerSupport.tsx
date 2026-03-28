@@ -389,7 +389,7 @@ const CustomerSupport = () => {
   if (hasAccess === null) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#2185FF' }}>
           <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#001540' }} />
         </div>
       </Layout>
@@ -399,7 +399,7 @@ const CustomerSupport = () => {
   if (hasAccess === false) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#2185FF' }}>
           <Card className="max-w-md">
             <CardContent className="pt-6 text-center">
               <Lock className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
@@ -422,7 +422,7 @@ const CustomerSupport = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#2185FF' }}>
         <div className="max-w-4xl mx-auto">
           
           {/* Header */}

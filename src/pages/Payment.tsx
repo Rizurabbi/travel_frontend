@@ -182,7 +182,7 @@ const Payment = () => {
   if (isPaymentMode && paymentStatus === 'success') {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#2185FF' }}>
           <Card className="max-w-md w-full">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
@@ -230,7 +230,7 @@ const Payment = () => {
   if (isPaymentMode && paymentStatus === 'failed') {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#2185FF' }}>
           <Card className="max-w-md w-full">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
@@ -264,7 +264,7 @@ const Payment = () => {
   if (isPaymentMode && paymentStatus === 'pending') {
     return (
       <Layout>
-        <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#9ABDDC' }}>
+        <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#2185FF' }}>
           <div className="max-w-2xl mx-auto">
             <Card>
               <CardHeader className="text-center">

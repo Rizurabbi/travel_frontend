@@ -14,7 +14,7 @@ const Travel = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#2185FF' }}>
         {/* Hero Section */}
         <section className="py-8 px-4">
           <div className="max-w-4xl mx-auto text-center">

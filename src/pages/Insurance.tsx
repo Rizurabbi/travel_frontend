@@ -14,7 +14,7 @@ const Insurance = () => {
 
   return (
     <Layout>
-      <div className="h-screen overflow-hidden flex flex-col" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="h-screen overflow-hidden flex flex-col" style={{ backgroundColor: '#2185FF' }}>
         {/* Hero Section */}
         <section className="py-8 px-4 flex-shrink-0">
           <div className="max-w-4xl mx-auto text-center">

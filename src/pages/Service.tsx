@@ -53,7 +53,7 @@ const Service = () => {
 
   return (
     <Layout>
-      <div className="h-screen overflow-hidden flex flex-col bg-background" style={{ backgroundColor: '#9ABDDC' }}>
+      <div className="h-screen overflow-hidden flex flex-col bg-background" style={{ backgroundColor: '#2185FF' }}>
         {/* Hero Section */}
         <div className="py-8 px-4 flex-shrink-0">
           <div className="max-w-7xl mx-auto text-center">
