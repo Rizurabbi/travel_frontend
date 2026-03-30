@@ -578,7 +578,7 @@
 
 // src/pages/SupportAccess.tsx - COMPLETELY FIXED VERSION
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -614,17 +614,27 @@ interface PricingPlan {
   name: string;
 }
 
+interface SelectedDatePlan {
+  days: number;
+  amount: number;
+  startDate: string;
+  endDate: string;
+}
+
 const SupportAccess = () => {
   const { user, token, refreshUser } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const [supportStatus, setSupportStatus] = useState<SupportStatus | null>(null);
   const [pricing, setPricing] = useState<{ monthly: PricingPlan; yearly: PricingPlan } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly' | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<'custom' | 'monthly' | 'yearly' | null>(null);
   const [paypalOrderId, setPaypalOrderId] = useState<string | null>(null);
   const [supportAccessId, setSupportAccessId] = useState<string | null>(null);
+
+  const selectedDatePlan = (location.state as { selectedDatePlan?: SelectedDatePlan } | null)?.selectedDatePlan;
 
   useEffect(() => {
     console.log('🔍 Auth check - User:', user ? 'Logged in' : 'Not logged in');
@@ -678,7 +688,7 @@ const SupportAccess = () => {
     }
   };
 
-  const purchaseSupport = async (plan: 'monthly' | 'yearly') => {
+  const purchaseSupport = async (plan: 'custom' | 'monthly' | 'yearly') => {
     if (!pricing) {
       console.error('❌ No pricing data');
       return;
@@ -696,7 +706,17 @@ const SupportAccess = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ plan })
+        body: JSON.stringify(
+          plan === 'custom' && selectedDatePlan
+            ? {
+                plan: 'custom',
+                start_date: selectedDatePlan.startDate,
+                end_date: selectedDatePlan.endDate,
+                days: selectedDatePlan.days,
+                amount: selectedDatePlan.amount,
+              }
+            : { plan }
+        )
       });
 
       console.log('📡 Order response status:', orderResponse.status);
@@ -975,7 +995,62 @@ const SupportAccess = () => {
                 Choose a Plan
               </h2>
               
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className={`grid ${selectedDatePlan ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-8 mb-8`}>
+                {selectedDatePlan && (
+                  <Card className="relative border-2" style={{ borderColor: '#001540' }}>
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <Badge className="bg-[#001540] text-white px-3 py-1">
+                        Selected Dates
+                      </Badge>
+                    </div>
+                    <CardHeader className="pt-6">
+                      <CardTitle>Custom Date Plan</CardTitle>
+                      <CardDescription>
+                        {new Date(selectedDatePlan.startDate).toLocaleDateString()} - {new Date(selectedDatePlan.endDate).toLocaleDateString()}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center mb-6">
+                        <p className="text-5xl font-bold mb-2" style={{ color: '#001540' }}>
+                          ${selectedDatePlan.amount}
+                        </p>
+                        <p className="text-muted-foreground">for {selectedDatePlan.days} day{selectedDatePlan.days > 1 ? 's' : ''}</p>
+                      </div>
+
+                      <ul className="space-y-3 mb-6">
+                        <li className="flex items-start">
+                          <CheckCircle2 className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span>Pricing based on your selected dates</span>
+                        </li>
+                        <li className="flex items-start">
+                          <CheckCircle2 className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span>24/7 AI customer support</span>
+                        </li>
+                        <li className="flex items-start">
+                          <CheckCircle2 className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span>Help with bookings & payments</span>
+                        </li>
+                      </ul>
+
+                      <Button
+                        onClick={() => purchaseSupport('custom')}
+                        disabled={selectedPlan !== null}
+                        className="w-full"
+                        style={{ backgroundColor: '#001540' }}
+                      >
+                        {selectedPlan === 'custom' ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Loading Payment...
+                          </>
+                        ) : (
+                          'Pay Selected Dates Amount'
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Monthly Plan */}
                 <Card className="relative">
                   <CardHeader>

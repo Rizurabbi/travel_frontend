@@ -93,7 +93,16 @@ const IndexEs = () => {
       return;
     }
     setSupportModalOpen(false);
-    navigate("/support-access");
+    navigate("/support-access", {
+      state: {
+        selectedDatePlan: {
+          days: estimatedCost,
+          amount: estimatedCost,
+          startDate: travelDates.startDate,
+          endDate: travelDates.endDate,
+        },
+      },
+    });
   };
 
   const handleLogin = async () => {
