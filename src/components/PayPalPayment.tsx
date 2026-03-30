@@ -11,7 +11,10 @@ interface PayPalPaymentProps {
   prefilledAmount?: string;
   itemDescription?: string;
 }
-const API_BASE_URL = process.env.REACT_APP_API_URL ||  "https://openskai.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  process.env.REACT_APP_API_URL ||
+  "https://openskai.onrender.com";
 console.log("API Base URL:", API_BASE_URL);
 
 
