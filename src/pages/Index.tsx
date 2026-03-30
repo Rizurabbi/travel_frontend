@@ -484,6 +484,11 @@ const Index = () => {
 
         {/* Chat Input Section */}
         <div className="chat-section">
+          {(messages.length > 0 || isLoading) && (
+            <div className="chat-messages-area">
+              <ChatContainer messages={messages} isLoading={isLoading} />
+            </div>
+          )}
           <form className="chat-input-wrapper" onSubmit={handleHomeChatSubmit}>
             <input
               type="text"
