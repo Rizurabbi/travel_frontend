@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import "../styles/index.css";
 
 const API_BASE_URL =
@@ -29,6 +30,7 @@ const API_BASE_URL =
   "https://openskai.onrender.com";
 
 const IndexEs = () => {
+  const navigate = useNavigate();
   const { messages, isLoading, sendMessage } = useChat();
   const { user, token, login } = useAuth();
   const { toast } = useToast();
@@ -469,9 +471,25 @@ const IndexEs = () => {
             </Button>
             <p className="text-center text-sm" style={{ color: "#001540" }}>
               ¿No tienes una cuenta?{" "}
-              <a href="/auth" style={{ color: "#2185FF", fontWeight: "600", textDecoration: "none" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginModalOpen(false);
+                  setSupportModalOpen(false);
+                  navigate("/auth");
+                }}
+                style={{
+                  color: "#2185FF",
+                  fontWeight: "600",
+                  textDecoration: "none",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
                 Regístrate aquí
-              </a>
+              </button>
             </p>
           </div>
         </DialogContent>
