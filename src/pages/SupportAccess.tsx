@@ -689,7 +689,7 @@ const SupportAccess = () => {
   };
 
   const purchaseSupport = async (plan: 'custom' | 'monthly' | 'yearly') => {
-    if (!pricing) {
+    if (plan !== 'custom' && !pricing) {
       console.error('❌ No pricing data');
       return;
     }
@@ -710,10 +710,12 @@ const SupportAccess = () => {
           plan === 'custom' && selectedDatePlan
             ? {
                 plan: 'custom',
-                start_date: selectedDatePlan.startDate,
-                end_date: selectedDatePlan.endDate,
-                days: selectedDatePlan.days,
-                amount: selectedDatePlan.amount,
+                custom_plan: {
+                  amount: selectedDatePlan.amount,
+                  duration_days: selectedDatePlan.days,
+                  currency: 'USD',
+                  name: 'Selected Dates Support',
+                },
               }
             : { plan }
         )
@@ -1029,6 +1031,10 @@ const SupportAccess = () => {
                         <li className="flex items-start">
                           <CheckCircle2 className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
                           <span>Help with bookings & payments</span>
+                        </li>
+                        <li className="flex items-start">
+                          <CheckCircle2 className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span>Exact pricing for your selected travel dates</span>
                         </li>
                       </ul>
 
