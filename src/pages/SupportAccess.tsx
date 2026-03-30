@@ -589,21 +589,16 @@ import { useToast } from '@/hooks/use-toast';
 
 // CRITICAL: Use correct API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-                     process.env.REACT_APP_API_URL || 
-                     "http://localhost:3002";  // ← Default to localhost!
+           process.env.REACT_APP_API_URL || 
+           "https://openskai.onrender.com";
 
 const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID || 
-                         process.env.REACT_APP_PAYPAL_CLIENT_ID;
+             process.env.REACT_APP_PAYPAL_CLIENT_ID ||
+             "sb";
 
 // Debug logging
 console.log('🔍 SupportAccess - API URL:', API_BASE_URL);
 console.log('🔍 SupportAccess - PayPal Client ID:', PAYPAL_CLIENT_ID ? 'Set ✅' : 'Missing ❌');
-
-declare global {
-  interface Window {
-    paypal: any;
-  }
-}
 
 interface SupportStatus {
   has_access: boolean;
@@ -769,17 +764,7 @@ const SupportAccess = () => {
   const loadPayPalSDK = (orderId: string, supportAccessId: string) => {
     console.log('💳 Loading PayPal SDK...');
 
-    if (!PAYPAL_CLIENT_ID) {
-      toast({
-        title: "Configuration Error",
-        description: "PayPal Client ID is not configured",
-        variant: "destructive",
-      });
-      setSelectedPlan(null);
-      return;
-    }
-
-    if (window.paypal) {
+    if ((window as any).paypal) {
       console.log('✅ PayPal SDK already loaded');
       renderPayPalButtons(orderId, supportAccessId);
       return;
@@ -819,7 +804,7 @@ const SupportAccess = () => {
     // Clear previous buttons
     container.innerHTML = '';
 
-    window.paypal.Buttons({
+    (window as any).paypal.Buttons({
       createOrder: () => {
         console.log('💳 PayPal: Using order ID:', orderId);
         return orderId;

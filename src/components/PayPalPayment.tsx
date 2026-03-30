@@ -18,7 +18,7 @@ console.log("API Base URL:", API_BASE_URL);
 
 declare global {
   interface Window {
-    paypal?: any;
+    paypal: any;
   }
 }
 

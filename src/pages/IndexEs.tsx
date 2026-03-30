@@ -54,14 +54,15 @@ const IndexEs = () => {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/api/support/access`, {
+      const response = await fetch(`${API_BASE_URL}/api/support/access-status`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      if (response.ok) {
-        setSupportAccessInfo(data);
-        if (data.has_access) {
+      if (response.ok && data.success) {
+        const supportData = data.support_access;
+        setSupportAccessInfo(supportData);
+        if (supportData?.has_access) {
           setShowSupportChat(true);
         } else {
           setSupportModalOpen(true);
@@ -91,28 +92,8 @@ const IndexEs = () => {
       toast({ title: "Error", description: "Por favor selecciona las fechas de viaje", variant: "destructive" });
       return;
     }
-    setIsProcessingPayment(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/support/purchase-access`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ start_date: travelDates.startDate, end_date: travelDates.endDate, days: estimatedCost, amount: estimatedCost }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to initiate payment");
-      if (data.payment_url) {
-        window.location.href = data.payment_url;
-      } else {
-        setSupportAccessInfo(data);
-        setShowSupportChat(true);
-        setSupportModalOpen(false);
-        toast({ title: "Éxito", description: "¡Acceso al soporte concedido!" });
-      }
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message || "Failed to process payment", variant: "destructive" });
-    } finally {
-      setIsProcessingPayment(false);
-    }
+    setSupportModalOpen(false);
+    navigate("/support-access");
   };
 
   const handleLogin = async () => {
@@ -369,7 +350,7 @@ const IndexEs = () => {
                           className="w-full"
                           style={{ backgroundColor: "#2185FF", color: "white", fontWeight: "600" }}
                         >
-                          {isProcessingPayment ? "Procesando..." : `Pagar $${estimatedCost}.00`}
+                          {isProcessingPayment ? "Procesando..." : "Continuar a planes de pago"}
                         </Button>
                       </div>
                     )}

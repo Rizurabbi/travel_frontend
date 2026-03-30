@@ -57,7 +57,7 @@ const Index = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/support/access`, {
+      const response = await fetch(`${API_BASE_URL}/api/support/access-status`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -65,10 +65,11 @@ const Index = () => {
       });
 
       const data = await response.json();
-      
-      if (response.ok) {
-        setSupportAccessInfo(data);
-        if (data.has_access) {
+
+      if (response.ok && data.success) {
+        const supportData = data.support_access;
+        setSupportAccessInfo(supportData);
+        if (supportData?.has_access) {
           setShowSupportChat(true);
         } else {
           setSupportModalOpen(true);
@@ -119,49 +120,8 @@ const Index = () => {
       return;
     }
 
-    setIsProcessingPayment(true);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/support/purchase-access`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          start_date: travelDates.startDate,
-          end_date: travelDates.endDate,
-          days: estimatedCost,
-          amount: estimatedCost,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to initiate payment");
-      }
-
-      if (data.payment_url) {
-        window.location.href = data.payment_url;
-      } else {
-        setSupportAccessInfo(data);
-        setShowSupportChat(true);
-        setSupportModalOpen(false);
-        toast({
-          title: "Success",
-          description: "Support access granted!",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to process payment",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessingPayment(false);
-    }
+    setSupportModalOpen(false);
+    navigate("/support-access");
   };
 
   const handleLogin = async () => {
@@ -456,7 +416,7 @@ const Index = () => {
                             fontWeight: "600",
                           }}
                         >
-                          {isProcessingPayment ? "Processing..." : `Pay $${estimatedCost}.00`}
+                          {isProcessingPayment ? "Processing..." : "Continue to Payment Plans"}
                         </Button>
                       </div>
                     )}
