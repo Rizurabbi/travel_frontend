@@ -42,7 +42,6 @@ const IndexEs = () => {
   const [travelDates, setTravelDates] = useState({ startDate: "", endDate: "" });
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [showSupportChat, setShowSupportChat] = useState(false);
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -63,7 +62,8 @@ const IndexEs = () => {
         const supportData = data.support_access;
         setSupportAccessInfo(supportData);
         if (supportData?.has_access) {
-          setShowSupportChat(true);
+          setSupportModalOpen(false);
+          navigate('/customer-support');
         } else {
           setSupportModalOpen(true);
         }
@@ -114,9 +114,10 @@ const IndexEs = () => {
     try {
       await login(loginEmail, loginPassword);
       setLoginModalOpen(false);
-      setSupportModalOpen(true);
+      setSupportModalOpen(false);
       setLoginEmail("");
       setLoginPassword("");
+      navigate('/support-access');
     } catch (error: any) {
       toast({ title: "Error", description: error.message || "Error al iniciar sesión", variant: "destructive" });
     } finally {
@@ -273,7 +274,7 @@ const IndexEs = () => {
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-              {!showSupportChat ? (
+              {
                 <>
                   <DialogHeader>
                     <DialogTitle className="text-3xl font-bold mb-4" style={{ color: "#2185FF" }}>
@@ -308,14 +309,14 @@ const IndexEs = () => {
                     ) : supportAccessInfo?.has_access ? (
                       <div className="p-4 rounded-lg text-center" style={{ backgroundColor: "#e8f5e9" }}>
                         <p className="text-green-700 font-bold text-lg">
-                          ✓ Tienes acceso al soporte hasta el {new Date(supportAccessInfo.expires_at).toLocaleDateString()}
+                          ✓ Ya tienes acceso al soporte
                         </p>
                         <Button
-                          onClick={() => setShowSupportChat(true)}
+                          onClick={() => navigate('/customer-support')}
                           className="mt-4"
                           style={{ backgroundColor: "#2185FF", color: "white", fontWeight: "600" }}
                         >
-                          Iniciar Chat
+                          Abrir chat de soporte
                         </Button>
                       </div>
                     ) : (
@@ -365,24 +366,7 @@ const IndexEs = () => {
                     )}
                   </div>
                 </>
-              ) : (
-                <>
-                  <DialogHeader>
-                    <DialogTitle className="text-3xl font-bold" style={{ color: "#2185FF" }}>
-                      Chat de Soporte en Vivo
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                    <div className="p-4 rounded-lg text-center mb-4" style={{ backgroundColor: "#e3f2fd" }}>
-                      <p style={{ color: "#2185FF", fontWeight: "600" }}>
-                        Es un placer tenerte conectado. ¿En qué puedo ayudarte?
-                      </p>
-                    </div>
-                    <ChatContainer messages={messages} isLoading={isLoading} />
-                  </div>
-                  <ChatInput onSendMessage={sendMessage} disabled={isLoading} />
-                </>
-              )}
+              }
             </DialogContent>
           </Dialog>
         </div>

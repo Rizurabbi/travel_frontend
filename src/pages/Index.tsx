@@ -43,7 +43,6 @@ const Index = () => {
   const [travelDates, setTravelDates] = useState({ startDate: "", endDate: "" });
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [showSupportChat, setShowSupportChat] = useState(false);
   
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -70,7 +69,8 @@ const Index = () => {
         const supportData = data.support_access;
         setSupportAccessInfo(supportData);
         if (supportData?.has_access) {
-          setShowSupportChat(true);
+          setSupportModalOpen(false);
+          navigate("/customer-support");
         } else {
           setSupportModalOpen(true);
         }
@@ -148,9 +148,10 @@ const Index = () => {
     try {
       await login(loginEmail, loginPassword);
       setLoginModalOpen(false);
-      setSupportModalOpen(true);
+      setSupportModalOpen(false);
       setLoginEmail("");
       setLoginPassword("");
+      navigate("/support-access");
     } catch (error: any) {
       toast({
         title: "Error",
@@ -318,7 +319,7 @@ const Index = () => {
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-              {!showSupportChat ? (
+              {
                 <>
                   <DialogHeader>
                     <DialogTitle className="text-3xl font-bold mb-4" style={{ color: "#2185FF" }}>
@@ -360,10 +361,10 @@ const Index = () => {
                     ) : supportAccessInfo?.has_access ? (
                       <div className="p-4 rounded-lg text-center" style={{ backgroundColor: "#e8f5e9" }}>
                         <p className="text-green-700 font-bold text-lg">
-                          ✓ You have support access until {new Date(supportAccessInfo.expires_at).toLocaleDateString()}
+                          ✓ You already have support access
                         </p>
                         <Button
-                          onClick={() => setShowSupportChat(true)}
+                          onClick={() => navigate("/customer-support")}
                           className="mt-4"
                           style={{
                             backgroundColor: "#2185FF",
@@ -371,7 +372,7 @@ const Index = () => {
                             fontWeight: "600",
                           }}
                         >
-                          Start Chat
+                          Open Support Chat
                         </Button>
                       </div>
                     ) : (
@@ -431,24 +432,7 @@ const Index = () => {
                     )}
                   </div>
                 </>
-              ) : (
-                <>
-                  <DialogHeader>
-                    <DialogTitle className="text-3xl font-bold" style={{ color: "#2185FF" }}>
-                      Live Support Chat
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                    <div className="p-4 rounded-lg text-center mb-4" style={{ backgroundColor: "#e3f2fd" }}>
-                      <p style={{ color: "#2185FF", fontWeight: "600" }}>
-                        Great to have you logged in. How may I help you?
-                      </p>
-                    </div>
-                    <ChatContainer messages={messages} isLoading={isLoading} />
-                  </div>
-                  <ChatInput onSendMessage={sendMessage} disabled={isLoading} />
-                </>
-              )}
+              }
             </DialogContent>
           </Dialog>
         </div>
