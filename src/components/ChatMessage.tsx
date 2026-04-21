@@ -78,9 +78,9 @@ export const ChatMessage = ({ role, content, type, flights, hotels, tourPackages
             : "bg-primary text-primary-foreground shadow-lg"
         )}
       >
-        <div className="p-5">
+        <div className="p-3">
           <p className={cn(
-            "text-xs font-semibold mb-3 uppercase tracking-wide",
+            "text-xs font-semibold mb-1 uppercase tracking-wide",
             isAssistant ? "text-primary" : "text-primary-foreground/80"
           )}>
             {isAssistant ? "Travel Guide" : "You"}
@@ -88,7 +88,7 @@ export const ChatMessage = ({ role, content, type, flights, hotels, tourPackages
           
           {isAssistant ? (
             <>
-              <div className="prose prose-sm max-w-none [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-foreground [&>h3]:mt-6 [&>h3]:mb-3 [&>h3]:flex [&>h3]:items-center [&>h3]:gap-2 [&>h3]:before:content-['✈️'] [&>ul]:space-y-2 [&>ul]:my-4 [&>li]:text-foreground/90 [&>li]:leading-relaxed [&>li]:pl-2 [&>li::marker]:text-primary [&>strong]:text-foreground [&>strong]:font-semibold [&>p]:text-foreground/80 [&>p]:leading-relaxed [&>p]:my-3">
+              <div className="prose prose-sm max-w-none [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-foreground [&>h3]:mt-4 [&>h3]:mb-2 [&>h3]:flex [&>h3]:items-center [&>h3]:gap-2 [&>h3]:before:content-['✈️'] [&>ul]:space-y-1 [&>ul]:my-2 [&>li]:text-foreground/90 [&>li]:leading-snug [&>li]:pl-2 [&>li::marker]:text-primary [&>strong]:text-foreground [&>strong]:font-semibold [&>p]:text-foreground/80 [&>p]:leading-snug [&>p]:my-1">
                 <ReactMarkdown>{content}</ReactMarkdown>
               </div>
 
@@ -231,7 +231,7 @@ export const ChatMessage = ({ role, content, type, flights, hotels, tourPackages
               )}
             </>
           ) : (
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+            <p className="text-sm leading-snug whitespace-pre-wrap">{content}</p>
           )}
         </div>
       </Card>

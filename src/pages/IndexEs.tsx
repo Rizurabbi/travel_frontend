@@ -32,6 +32,7 @@ const API_BASE_URL =
 const IndexEs = () => {
   const navigate = useNavigate();
   const { messages, isLoading, sendMessage } = useChat();
+  const hasActiveConversation = messages.length > 0 || isLoading;
   const { user, token, login } = useAuth();
   const { toast } = useToast();
   const [homeMessage, setHomeMessage] = useState("");
@@ -146,7 +147,7 @@ const IndexEs = () => {
         </div>
 
         {/* Sección Tarjetas de Servicio */}
-        <div className="services-section">
+        {!hasActiveConversation && <div className="services-section">
           {/* Reserva de Viaje */}
           <Dialog>
             <DialogTrigger asChild>
@@ -369,11 +370,11 @@ const IndexEs = () => {
               }
             </DialogContent>
           </Dialog>
-        </div>
+        </div>}
 
         {/* Sección Chat */}
         <div className="chat-section">
-          {(messages.length > 0 || isLoading) && (
+          {hasActiveConversation && (
             <div className="chat-messages-area">
               <ChatContainer messages={messages} isLoading={isLoading} />
             </div>

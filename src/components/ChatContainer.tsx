@@ -65,7 +65,7 @@ export const ChatContainer = ({ messages, isLoading }: ChatContainerProps) => {
   }, [messages]);
 
   return (
-    <div className="overflow-y-auto space-y-4 mb-4" style={{ maxHeight: 'calc(60vh - 120px)' }}>
+    <div className="h-full overflow-y-auto space-y-2 pr-1">
       {messages.length === 0 ? null : (
         <>
         {messages.map((message, index) => (
